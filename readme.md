@@ -1,10 +1,17 @@
-update : d1
+1日おきにアップデートされるArch LinuxのDockerイメージです。
 
+Update : D1
+
+[![Build Status](https://travis-ci.org/ArchLinuxJP/archlinux-docker.svg?branch=master)](https://travis-ci.org/ArchLinuxJP/archlinux-docker)
+
+```bash
+$ sudo docker pull archlinuxjp/archlinux
+$ sudo docker run -it archlinuxjp/archlinux /bin/bash
 ```
 
-```
+このArch Linuxの Dockerイメージは、[docker/docker](https://github.com/docker/docker/blob/master/contrib/mkimage-arch.sh)のスクリプトを使用して作成されています。イメージの作成方法は`Step 1`になります。これは既存のArch Linux上で実行されました。
 
-## step 1
+## Step 1
 
 ```bash
 $ systemctl start docker
@@ -28,7 +35,9 @@ $ docker run -it $USER/$REPO /bin/bash
 $ docker push $USER/$REPO
 ```
 
-## step 2
+## Step 2
+
+`Step 2`ではDockerイメージを更新する手続きについて記述します。具体的には`Travis-CI`の`Cron Jobs`機能を使ってイメージを更新します。これは、1日おきにDockerイメージを`pacman -Syu`してDocker Hubに`Push`する内容になっています。ただし、当該更新手順は予告なく変更される可能性があります。
 
 update : travis-ci($USER/$REPO) -> cron jobs -> d1
 
@@ -45,7 +54,7 @@ env:
 
 
 script:
-  - docker build -t $REPO .
+  - docker build -t $USER/$REPO .
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
@@ -54,14 +63,16 @@ after_success:
     fi
 ```
 
-## other
+## Other
+
+その他、公式スクリプト`mkimage-arch.sh`によって作成されたDockerイメージを`.tar.gz`の形式にエクスポートしたり、それをイメージにインポートする方法は下記の通りです。
 
 ```bash
 $ ./mkimage-arch.sh
 ```
 
 ```bash
-$ docker save archlinux > archlinux.tar.gz
+$ docker save $USER/$REPO > archlinux.tar.gz
 $ tar -c . | docker import - $USER/$REPO
 $ docker run -it $USER/$REPO /bin/bash
 # :
@@ -86,6 +97,7 @@ ADD archlinux.tar.gz /
 
 ```bash
 $ docker build -t $USER/$REPO .
+$ docker run -it $USER/$REPO /bin/bash
 # :
 # pacman -Sy archlinux-keyring --noconfirm
 # pacman-key --refresh-keys

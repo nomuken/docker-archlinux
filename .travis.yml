@@ -1,0 +1,27 @@
+sudo: required
+
+language: ruby
+
+services:
+  - docker
+
+env:
+  - TARGET_CONTAINER_ID=container-$DOCKER_REPO
+
+script:
+  - export tag=`date +%Y.%m.%d`
+  - docker build -t $DOCKER_TEARM/$DOCKER_REPO .
+  - docker build -t $DOCKER_TEARM/$DOCKER_REPO:${tag} .
+
+after_success:
+- if [ "$TRAVIS_BRANCH" == "master" ]; then
+        docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker push $DOCKER_TEARM/$DOCKER_REPO;
+        docker push $DOCKER_TEARM/$DOCKER_REPO:${tag};
+        export text=`docker images`;
+        curl -X POST "$SLACK_WEB_URL" -d "payload={\"channel\":\"$SLACK_CHANNEL\", \"username\":\"docker\", \"text\":\"$text\", \"icon_emoji\":\":docker:\"}";
+  fi
+
+notifications:
+  slack:
+    secure: t7e4bLXCKqPh3eeTohvzn1+Gpk3lEhX2wv3ClsGdYdXnwHJXhElFPBJgn2evnUEQrdfR5dV4j+c0qHvLwCPNEQ+jrNRS1R/k9ZIsBhox1GH7/dg7iL+S31L/wpwt7Zvh/JGuQexCEGzFeY7JohrufJm+2cBqMEaIirkIPw69HtylF9UdUNcEICEX8+gZrdQRDZ+MGhRPw8/mnQFb0ju710aCGS/PDQcHjK7BBSkpm0yxhD0xvl3SvQazXFsGrmIBhzY6rzjE5sr6/G166qQRzOdRWXGcuaJCijFvgmXVe/ihNwQXEYlHSZXOaSjQy48aplcBJ5zkVSWmC7DR+Hq648SqJbzAjt+6Ki67A55dKD1yuQHeou0l2vO4aVDwCbKF12iFZ2F4ixEX/uverpqCNwIHxeXNN1yJUiijEAwu6YkExsleWS7/4mGCZJgv98pVxEDdJybBFmHnLrF07sa1kAexwliDpXET49SjjCoyswr/VUM6wP22pDVUiuTPwlLSTN7/Zbt9fIwN29b5jmUHTz+sx0OhxYVjYDE/l1OgTiU1AV/lxZIpFiX0zzQyHImGGFcb7XE/lbF88m/6KbnyuwRVuXdJmCpWSoe4g7wbiizJxDM4KSwcKkIia1hn9vGhfwWmTMpyLF82S5YdMPzzKuklOV/EkcRP3cZOjMb5ZZI=

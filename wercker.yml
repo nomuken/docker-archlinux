@@ -1,0 +1,15 @@
+box: archlinuxjp/archlinux
+build:
+  steps:
+    - script:
+        name: check version
+        code: |
+                uname -a
+deploy:
+  steps:
+    - internal/docker-push:
+        username: $USERNAME
+        password: $PASSWORD
+        tag: test
+        repository: archlinuxjp/archlinux
+        registry: https://hub.docker.com/r/archlinuxjp/archlinux
