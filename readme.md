@@ -2,7 +2,7 @@
 
 Update : D1
 
-[![Build Status](https://travis-ci.org/ArchLinuxJP/archlinux-docker.svg?branch=master)](https://travis-ci.org/ArchLinuxJP/archlinux-docker)
+[![Build Status](https://travis-ci.org/ArchLinuxJP/docker-archlinux.svg?branch=master)](https://travis-ci.org/ArchLinuxJP/docker-archlinux)
 
 ```bash
 $ sudo docker pull archlinuxjp/archlinux
