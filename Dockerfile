@@ -7,5 +7,4 @@ RUN pacman -Sy archlinux-keyring --noconfirm && \
       pacman-db-upgrade && \
       trust extract-compat && \
       pacman -Syu --noconfirm && \
-      yes y | pacman -Scc && \
-      yes o | pacdiff
+      yes y | pacman -Scc
